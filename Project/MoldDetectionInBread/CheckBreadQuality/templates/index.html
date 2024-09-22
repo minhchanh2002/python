@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    <style>
+        .dectection-result__img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dectection-result__img img {
+            max-height: 250px;
+            max-width: 100%;
+            width: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row g-3 mt-2">
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-header"><b>Upload Image</b></div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{category}}" role="alert">
+                                    {{message}}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <form class="row g-3" method="post" enctype="multipart/form-data" id="dectection_form">
+                        <div class="col-md-12">
+                            <label for="image" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control" id="image" name="image" placeholder="Example input placeholder">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Detect</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-header"><b>Detection Result</b></div>
+                <div class="card-body">
+                    <div class="dectection-result__img">
+                        {% if view is not none %}
+                            <a href="{{view.link_preview_hsv_img}}" target="_blank"><img src="{{view.link_preview_hsv_img}}" /></a>
+                        {% endif %}
+                    </div>
+                    <div class="dectection-result__img">
+                        {% if view is not none %}
+                            <a href="{{view.link_preview_img_with_outline_rgb}}" target="_blank"><img src="{{view.link_preview_img_with_outline_rgb}}" /></a>
+                        {% endif %}
+                    </div>
+                    <div class="dectection-result__img">
+                        {% if view is not none %}
+                            <a href="{{view.link_preview_result_combined_rgb}}" target="_blank"><img src="{{view.link_preview_result_combined_rgb}}" /></a>
+                        {% endif %}
+                    </div>
+                    <div class="dectection-result__img">
+                        {% if view is not none %}
+                            <a href="{{view.link_preview_img_with_mold_rgb}}" target="_blank"><img src="{{view.link_preview_img_with_mold_rgb}}" /></a>
+                        {% endif %}
+                        <br/>
+                    </div>
+                    {% if view is not none %}
+                        <div class="alert alert-info mt-3" role="alert">
+                            <strong>Mold Detection Result:</strong> {{view.mold_detection_result}}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function() {
+            $('#image').on('change', function() {
+                $('#dectection_form').submit()
+            });
+
+            $( "#dectection_form" ).on("submit", function( event ) {
+                $('#loading').css('display', 'block')
+            });
+        })
+    </script>
+{% endblock %}

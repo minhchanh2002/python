@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    <style>
+        .detection-result__img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detection-result__img video {
+            max-height: 250px;
+            max-width: 100%;
+            width: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row g-3 mt-2">
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-header"><b>Upload Video</b></div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{category}}" role="alert">
+                                    {{message}}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <form class="row g-3" method="post" enctype="multipart/form-data" id="detection_form">
+                        <div class="col-md-12">
+                            <label for="video" class="form-label">Upload Video</label>
+                            <input type="file" class="form-control" id="video" name="video" placeholder="Example input placeholder">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Predict</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <div class="card">
+                <div class="card-header"><b>Prediction Result</b></div>
+                <div class="card-body">
+                    {% if view is not none %}
+                        <div class="alert alert-info mt-3" role="alert">
+                            <strong>Predicted Action:</strong> {{view.human_pose_detection_result}}
+                        </div>
+                        <div class="detection-result__img">
+                            <video controls>
+                                <source src="{{view.link_preview_vid}}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function() {
+            $('#video').on('change', function() {
+                $('#detection_form').submit()
+            });
+
+            $( "#detection_form" ).on("submit", function( event ) {
+                $('#loading').css('display', 'block')
+            });
+        })
+    </script>
+{% endblock %}
